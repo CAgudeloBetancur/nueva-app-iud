@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1015306385391",
+    "firebase_url": "https://nuevaappiud-default-rtdb.firebaseio.com",
+    "project_id": "nuevaappiud",
+    "storage_bucket": "nuevaappiud.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1015306385391:android:c237add908d63bf021681a",
+        "android_client_info": {
+          "package_name": "com.iud.nuevaapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1015306385391-ahq5nsbt7v9vv16slki2uvfshuvcon6u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.iud.nuevaapp",
+            "certificate_hash": "1606c041107d965ee15d68ba1e5b6f04cb533b43"
+          }
+        },
+        {
+          "client_id": "1015306385391-e2oou6thepcs7r4l4h2qp1a48rci5q4u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEwRl4hrJRLe5Szu1V3Tx5CTQ1vQEDPVo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1015306385391-e2oou6thepcs7r4l4h2qp1a48rci5q4u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
