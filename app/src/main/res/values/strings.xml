@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">NuevaApp</string>
+    <string name="facebook_app_id">1727101891458664</string>
+    <string name="fb_login_protocol_scheme">fb1727101891458664</string>
+    <string name="facebook_client_token">347b9ec7e02edf4218f0b493db335b30</string>
+    <string name="com_facebook_loginview_log_in_button_long">Hola</string>
+
+
 </resources>

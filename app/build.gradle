@@ -31,6 +31,31 @@ android {
 
 dependencies {
 
+    /*implementation ('androidx.browser:browser:1.8.0') {
+        exclude group: 'com.android.support', module: 'customtabs'
+    }*/
+    /*configurations.all {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            if (details.requested.group == 'com.android.support' && details.requested.name == 'customtabs') {
+                details.useTarget group: 'androidx.browser', name: 'browser', version: '1.4.0'
+            }
+        }
+    }*/
+    configurations.all {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            if (details.requested.group == 'com.android.support' && details.requested.name == 'support-v4') {
+                details.useTarget 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
+            }
+        }
+    }
+    configurations.all {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            if (details.requested.group == 'com.android.support') {
+                // Redirige todas las dependencias de android.support a androidx
+                details.useTarget group: 'androidx.core', name: 'core', version: '1.13.0'
+            }
+        }
+    }
     implementation libs.appcompat
     implementation libs.material
     implementation libs.activity
@@ -44,6 +69,6 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.android.gms:play-services-auth:21.0.0")
-
-
+    // Dependencies para autenticación con facebook
+    implementation libs.facebook.android.sdk
 }
