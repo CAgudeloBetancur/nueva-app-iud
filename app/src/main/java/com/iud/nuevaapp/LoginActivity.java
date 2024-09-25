@@ -2,6 +2,7 @@ package com.iud.nuevaapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +18,15 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.DeviceLoginManager;
+import com.facebook.login.LoginBehavior;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -26,14 +36,19 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Firebase;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthCredential;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.FirebaseDatabase;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class LoginActivity extends AppCompatActivity {
@@ -47,6 +62,8 @@ public class LoginActivity extends AppCompatActivity {
     private TextView registrateAqui;
     private Button loginBtn;
     private Button googleBtn;
+
+    private CallbackManager mCallbackManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,11 +121,13 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-        // login con google
+
+        // Autenticación con google
         googleBtn = findViewById(R.id.btnGoogle);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail().build();
+                .requestEmail()
+                .build();
         mGoogleSignInClient = GoogleSignIn.getClient(LoginActivity.this, gso);
         googleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,12 +136,15 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
+    // Método para manejar el login con google
     private void googleSignIn() {
         Intent intent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(intent, RC_SIGN_ING);
 
     }
 
+    // Sobrescritura del método para manejar resulados
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -134,9 +156,12 @@ public class LoginActivity extends AppCompatActivity {
             } catch (Exception ex) {
                  Toast.makeText(this, ex.getMessage(), Toast.LENGTH_SHORT).show();
             }
+        }else {
+            mCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
 
+    // Manejo de la autenticación con firebase para guardar datos en base de datos firebase
     private void firebaseAuth(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         auth.signInWithCredential(credential)
