@@ -19,11 +19,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class RegisterActivity extends AppCompatActivity {
 
     private FirebaseAuth auth;
-    private EditText registerEmail, registerPassword;
+    private EditText registerEmail, registerPassword, username;
     private Button registerBtn;
     private TextView ingresaAqui;
 
@@ -39,6 +40,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
         // Autenticacion
         auth = FirebaseAuth.getInstance();
+        username = findViewById(R.id.registerUsername);
         registerEmail = findViewById(R.id.registerEmail);
         registerPassword = findViewById(R.id.registerPassword);
         registerBtn = findViewById(R.id.btnRegister);

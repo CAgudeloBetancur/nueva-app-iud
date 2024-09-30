@@ -1,7 +1,9 @@
 package com.iud.nuevaapp;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -62,6 +65,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView registrateAqui;
     private Button loginBtn;
     private Button googleBtn;
+    private TextView forgotPassword;
 
     private CallbackManager mCallbackManager;
 
@@ -75,8 +79,18 @@ public class LoginActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        // Redireccionar hacia el register
+
+
+        auth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
         registrateAqui = findViewById(R.id.registrateAqui);
+        loginEmail = findViewById(R.id.loginUsername);
+        loginPassword = findViewById(R.id.loginPassword);
+        loginBtn = findViewById(R.id.btnLogin);
+        googleBtn = findViewById(R.id.btnGoogle);
+        forgotPassword = findViewById(R.id.forgotPassword);
+
+        // Redireccionar hacia el register
         registrateAqui.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -84,13 +98,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        // Instancias para autenticación
-        auth = FirebaseAuth.getInstance();
-        database = FirebaseDatabase.getInstance();
         // Autenticación por email y contraseña
-        loginEmail = findViewById(R.id.loginUsername);
-        loginPassword = findViewById(R.id.loginPassword);
-        loginBtn = findViewById(R.id.btnLogin);
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -123,7 +131,6 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         // Autenticación con google
-        googleBtn = findViewById(R.id.btnGoogle);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -135,6 +142,51 @@ public class LoginActivity extends AppCompatActivity {
                 googleSignIn();
             }
         });
+
+        // Recuperar contraseña
+        forgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                View dialogView = getLayoutInflater().inflate(R.layout.dialog_forgot_password, null);
+                EditText emailBox = dialogView.findViewById(R.id.emailBox);
+                builder.setView(dialogView);
+                AlertDialog dialog = builder.create();
+                dialogView.findViewById(R.id.btnReset).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String userEmail = emailBox.getText().toString();
+                        if(TextUtils.isEmpty(userEmail) && !Patterns.EMAIL_ADDRESS.matcher(userEmail).matches()) {
+                            Toast.makeText(LoginActivity.this, "Ingresa tu correo registrado", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                         auth.sendPasswordResetEmail(userEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
+                             @Override
+                             public void onComplete(@NonNull Task<Void> task) {
+                                 if(task.isSuccessful()) {
+                                     Toast.makeText(LoginActivity.this, "Revisa tu email", Toast.LENGTH_SHORT).show();
+                                     dialog.dismiss();
+                                 } else {
+                                     Toast.makeText(LoginActivity.this, "No se pudo enviar el email de recuperacion", Toast.LENGTH_SHORT).show();
+                                     dialog.dismiss();
+                                 }
+                             }
+                         });
+                    }
+                });
+                dialogView.findViewById(R.id.btnCancel).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                    }
+                });
+                if(dialog.getWindow() != null) {
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+                }
+                dialog.show();
+            }
+        });
+
     }
 
     // Método para manejar el login con google
